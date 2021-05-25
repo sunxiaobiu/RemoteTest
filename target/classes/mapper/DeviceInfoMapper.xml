@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="edu.monash.dao.DeviceInfoDAO">
+    <select id="selectById" resultType="DeviceInfo" parameterType="int">
+        SELECT * FROM device_info WHERE device_id = #{deviceId}
+    </select>
+
+    <insert id="insert" parameterType="edu.monash.entity.DeviceInfo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO device_info(
+		device_id,
+		create_time,
+		update_time,
+		sdk_version,
+		release_version,
+		device_model,
+		brand,
+		host,
+		device_name,
+		hardware_name,
+		language,
+		screen_size
+		)
+		VALUES(
+		#{deviceId},
+		now(),
+		now(),
+		#{sdkVersion},
+		#{releaseVersion},
+		#{deviceModel},
+		#{brand},
+		#{host},
+		#{deviceName},
+		#{hardwareName},
+		#{language},
+		#{screenSize}
+		);
+	</insert>
+</mapper>
