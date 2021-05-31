@@ -1,13 +1,13 @@
 package edu.monash.service.impl;
 
 import edu.monash.dao.DeviceInfoDAO;
-import edu.monash.service.DeviceInfoService;
 import edu.monash.entity.DeviceInfo;
+import edu.monash.service.DeviceInfoService;
 import edu.monash.util.ExceptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.util.List;
 
 @Component
 public class DeviceInfoServiceImpl implements DeviceInfoService {
@@ -33,6 +33,20 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getLanguage(), "[DAO.insertDeviceInfo] language shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getScreenSize(), "[DAO.insertDeviceInfo] screenSize shouldn't be null!");
         return deviceInfoDAO.insert(deviceInfo);
+    }
+
+    @Override
+    public List<DeviceInfo> selectListByGroup() {
+        return deviceInfoDAO.selectListByGroup();
+    }
+
+    @Override
+    public DeviceInfo selectBySdkBrandDeviceName(String sdkVersion, String releaseVersion, String deviceModel, String brand) {
+        ExceptionUtil.runtimeExpWithNullCheck(sdkVersion, "[DAO.selectBySdkBrandDeviceName] sdkVersion shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(releaseVersion, "[DAO.selectBySdkBrandDeviceName] releaseVersion shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(deviceModel, "[DAO.selectBySdkBrandDeviceName] deviceModel shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(brand, "[DAO.selectBySdkBrandDeviceName] brand shouldn't be null!");
+        return deviceInfoDAO.selectBySdkBrandDeviceName(sdkVersion,releaseVersion, deviceModel, brand);
     }
 
 
