@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="edu.monash.dao.TestRunnerDAO">
+
+    <resultMap id="TestRunnerMap" type="TestRunner">
+        <id column="id" property="id"/>
+        <!-- column是数据库表的列名 , property是对应实体类的属性名 -->
+        <result column="test_case_id" property="testCaseId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_success" property="isSuccess"/>
+        <result column="result" property="result"/>
+    </resultMap>
+
+	<select id="selectById" resultMap="TestRunnerMap" parameterType="int">
+        SELECT * FROM test_runner WHERE id = #{id}
+    </select>
+
+	<select id="selectListByDeviceId" resultMap="TestRunnerMap" parameterType="String">
+        select
+        	*
+        from
+        	test_runner
+        where device_id = #{deviceId} and is_success = 1
+        order by id asc
+    </select>
+
+    <insert id="insert" parameterType="edu.monash.entity.TestRunner" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO test_runner(
+		test_case_id,
+		device_id,
+		create_time,
+		update_time,
+		is_success,
+		result
+		)
+		VALUES(
+		#{testCaseId},
+		#{deviceId},
+		now(),
+		now(),
+		#{isSuccess},
+		#{result}
+		);
+	</insert>
+
+	<update id="update" parameterType="edu.monash.entity.TestRunner">
+	update test_runner
+	<set>
+		<if test="testRunner.isSuccess != null">
+			is_success = #{testRunner.isSuccess,jdbcType=TINYINT},
+		</if>
+		<if test="testRunner.result != null">
+			result = #{testRunner.result,jdbcType=TEXT},
+		</if>
+		update_time = now()
+	</set>
+	where test_case_id = #{testRunner.testCaseId} and device_id = #{testRunner.deviceId}
+	</update>
+</mapper>

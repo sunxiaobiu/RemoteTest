@@ -2,11 +2,15 @@ package edu.monash;
 
 public class GlobalRef
 {
-	public static String testCaseOriginPath = "/Users/xsun0035/Desktop/test_case_java/";
-	public static String testCaseDestinationPath = "/Users/xsun0035/workspace/monash/BasicUnitAndroidTest/app/src/androidTest/java/";
-	public static String generateInstrumentAPKPath = "/Users/xsun0035/workspace/monash/BasicUnitAndroidTest";
-	public static String instrumentAPKPath = "/Users/xsun0035/workspace/monash/BasicUnitAndroidTest/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk";
+	public static String jUnitTestGenTestCaseOriginPath = "/home/ubuntu/all_test_case/";
+	public static String jUnitTestGenTestCaseDestinationPath = "/home/ubuntu/monash/LazyCow/app/src/main/java/tinker/sample/android/androidtest/";
 
+	public static String aospFrameworkTestCaseOriginPath = "/home/ubuntu/AOSP_framework_tests/";
+	public static String aospFrameworkTestCaseDestinationPath = "/home/ubuntu/monash/LazyCow/app/src/main/java/";
 
+	public static String patchAPKPath = "/home/ubuntu/monash/LazyCow/app/build/outputs/apk/tinkerPatch/debug/app-debug-patch_signed_7zip.apk";
+	public static String orginAPKPath = "/home/ubuntu/monash/LazyCow/app/build/bakApk/app-debug-origin.apk";
+
+	public static String apkBuildPath = "/home/ubuntu/monash/LazyCow/";
 
 }

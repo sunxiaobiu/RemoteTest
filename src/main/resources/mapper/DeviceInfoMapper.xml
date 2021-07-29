@@ -3,25 +3,32 @@
 <!-- 设置为IUserDao接口方法提供sql语句配置 -->
 <mapper namespace="edu.monash.dao.DeviceInfoDAO">
 
-	<resultMap id="DeviceInfoMap" type="DeviceInfo">
-		<id column="id" property="id"/>
+    <resultMap id="DeviceInfoMap" type="DeviceInfo">
+        <id column="id" property="id"/>
+        <!-- column是数据库表的列名 , property是对应实体类的属性名 -->
+        <result column="device_id" property="deviceId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="sdk_version" property="sdkVersion"/>
+        <result column="release_version" property="releaseVersion"/>
+        <result column="device_model" property="deviceModel"/>
+        <result column="brand" property="brand"/>
+        <result column="host" property="host"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="hardware_name" property="hardwareName"/>
+        <result column="language" property="language"/>
+        <result column="screen_size" property="screenSize"/>
+    </resultMap>
+
+	<resultMap id="DeviceGroupMap" type="DeviceGroup">
 		<!-- column是数据库表的列名 , property是对应实体类的属性名 -->
-		<result column="device_id" property="deviceId"/>
-		<result column="create_time" property="createTime"/>
-		<result column="update_time" property="updateTime"/>
-		<result column="sdk_version" property="sdkVersion"/>
 		<result column="sdk_version" property="sdkVersion"/>
 		<result column="release_version" property="releaseVersion"/>
 		<result column="device_model" property="deviceModel"/>
 		<result column="brand" property="brand"/>
-		<result column="host" property="host"/>
-		<result column="device_name" property="deviceName"/>
-		<result column="hardware_name" property="hardwareName"/>
-		<result column="language" property="language"/>
-		<result column="screen_size" property="screenSize"/>
 	</resultMap>
 
-    <select id="selectById" resultType="DeviceInfo" parameterType="int">
+    <select id="selectById" resultMap="DeviceInfoMap" parameterType="String">
         SELECT * FROM device_info WHERE device_id = #{deviceId}
     </select>
 
@@ -56,18 +63,59 @@
 		);
 	</insert>
 
-	<select id="selectListByGroup" resultMap="DeviceInfoMap">
-        select * from device_info
+    <select id="selectListByGroup" resultMap="DeviceGroupMap">
+        select
+        	sdk_version,
+        	release_version,
+        	device_model,
+        	brand
+        from
+        	device_info
         GROUP BY sdk_version, release_version, device_model, brand
     </select>
 
-	<select id="selectBySdkBrandDeviceName" resultMap="DeviceInfoMap">
+    <select id="selectBySdkBrandDeviceName" resultMap="DeviceInfoMap">
         select * from device_info
         WHERE
         	sdk_version = #{sdkVersion}
         and release_version = #{releaseVersion}
         and device_model = #{deviceModel}
         and brand = #{brand}
+        order by id asc
     </select>
 
+	<update id="update" parameterType="edu.monash.entity.DeviceInfo">
+	update device_info
+	<set>
+		<if test="deviceInfo.sdkVersion != null">
+			sdk_version = #{deviceInfo.sdkVersion,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.releaseVersion != null">
+			release_version = #{deviceInfo.releaseVersion,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.deviceModel != null">
+			device_model = #{deviceInfo.deviceModel,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.brand != null">
+			brand = #{deviceInfo.brand,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.host != null">
+			host = #{deviceInfo.host,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.deviceName != null">
+			device_name = #{deviceInfo.deviceName,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.hardwareName != null">
+			hardware_name = #{deviceInfo.hardwareName,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.language != null">
+			language = #{deviceInfo.language,jdbcType=VARCHAR},
+		</if>
+		<if test="deviceInfo.screenSize != null">
+			screen_size = #{deviceInfo.screenSize,jdbcType=VARCHAR},
+		</if>
+		update_time = now()
+	</set>
+	where device_id = #{deviceInfo.deviceId}
+	</update>
 </mapper>

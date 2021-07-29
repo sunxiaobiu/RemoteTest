@@ -7,7 +7,7 @@ import java.util.Date;
 public class DeviceInfo {
 
     private int id;
-    private int deviceId;
+    private String deviceId;
     private Date createTime;
     private Date updateTime;
     private String sdkVersion;
@@ -28,11 +28,11 @@ public class DeviceInfo {
         this.id = id;
     }
 
-    public int getDeviceId() {
+    public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
 
@@ -127,18 +127,68 @@ public class DeviceInfo {
     public static DeviceInfo convert2DeviceInfo(JSONObject jsonObject){
         DeviceInfo deviceInfo = new DeviceInfo();
 
-        deviceInfo.setSdkVersion(jsonObject.get("id").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("deviceId").toString());
+        deviceInfo.setDeviceId(jsonObject.get("deviceId").toString());
         deviceInfo.setSdkVersion(jsonObject.get("sdkVersion").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("releaseVersion").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("deviceModel").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("brand").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("host").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("deviceName").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("hardwareName").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("language").toString());
-        deviceInfo.setSdkVersion(jsonObject.get("screenSize").toString());
+        deviceInfo.setReleaseVersion(jsonObject.get("releaseVersion").toString());
+        deviceInfo.setDeviceModel(jsonObject.get("deviceModel").toString());
+        deviceInfo.setBrand(jsonObject.get("brand").toString());
+        deviceInfo.setHost(jsonObject.get("host").toString());
+        deviceInfo.setDeviceName(jsonObject.get("deviceName").toString());
+        deviceInfo.setHardwareName(jsonObject.get("hardware").toString());
+        deviceInfo.setLanguage(jsonObject.get("language").toString());
+        deviceInfo.setScreenSize(jsonObject.get("screenSize").toString());
 
         return deviceInfo;
     }
+
+    public boolean equals(Object object){
+        if(!(object instanceof DeviceInfo)){
+            return false;
+        }
+        DeviceInfo deviceInfo = (DeviceInfo)object;
+        if(!this.sdkVersion.equals(deviceInfo.getSdkVersion())){
+            return false;
+        }
+        if(!this.releaseVersion.equals(deviceInfo.getReleaseVersion())){
+            return false;
+        }
+        if(!this.deviceModel.equals(deviceInfo.getDeviceModel())){
+            return false;
+        }
+        if(!this.brand.equals(deviceInfo.getBrand())){
+            return false;
+        }
+        if(!this.host.equals(deviceInfo.getHost())){
+            return false;
+        }
+        if(!this.deviceName.equals(deviceInfo.getDeviceName())){
+            return false;
+        }
+        if(!this.hardwareName.equals(deviceInfo.getHardwareName())){
+            return false;
+        }
+        if(!this.screenSize.equals(deviceInfo.getScreenSize())){
+            return false;
+        }
+        return true;
+    }
+
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("id:").append(this.id).append(";")
+                .append("deviceId:").append(this.deviceId).append(";")
+                .append("createTime:").append(this.createTime).append(";")
+                .append("updateTime:").append(this.updateTime).append(";")
+                .append("sdkVersion:").append(this.sdkVersion).append(";")
+                .append("releaseVersion:").append(this.releaseVersion).append(";")
+                .append("deviceModel:").append(this.deviceModel).append(";")
+                .append("brand:").append(this.brand).append(";")
+                .append("host:").append(this.host).append(";")
+                .append("deviceName:").append(this.deviceName).append(";")
+                .append("hardwareName:").append(this.hardwareName).append(";")
+                .append("language:").append(this.language).append(";")
+                .append("screenSize:").append(this.screenSize).append(";");
+        return stringBuilder.toString();
+    }
+
 }

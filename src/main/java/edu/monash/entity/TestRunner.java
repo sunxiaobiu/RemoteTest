@@ -1,12 +1,14 @@
 package edu.monash.entity;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.Date;
 
 public class TestRunner {
 
     private int id;
-    private int testCaseId;
-    private int deviceId;
+    private String testCaseId;
+    private String deviceId;
     private Date createTime;
     private Date updateTime;
     private boolean isSuccess;
@@ -20,19 +22,19 @@ public class TestRunner {
         this.id = id;
     }
 
-    public int getTestCaseId() {
+    public String getTestCaseId() {
         return testCaseId;
     }
 
-    public void setTestCaseId(int testCaseId) {
+    public void setTestCaseId(String testCaseId) {
         this.testCaseId = testCaseId;
     }
 
-    public int getDeviceId() {
+    public String getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
 
@@ -67,4 +69,15 @@ public class TestRunner {
     public void setResult(String result) {
         this.result = result;
     }
+
+    public static TestRunner convert2TestRunner(JSONObject jsonObject){
+        TestRunner testRunner = new TestRunner();
+
+        testRunner.setTestCaseId(jsonObject.get("testCaseName").toString());
+        testRunner.setSuccess(Boolean.valueOf(jsonObject.get("isSuccess").toString()));
+        testRunner.setResult(jsonObject.get("result").toString());
+
+        return testRunner;
+    }
+
 }

@@ -1,6 +1,7 @@
 package edu.monash.service.impl;
 
 import edu.monash.dao.DeviceInfoDAO;
+import edu.monash.entity.DeviceGroup;
 import edu.monash.entity.DeviceInfo;
 import edu.monash.service.DeviceInfoService;
 import edu.monash.util.ExceptionUtil;
@@ -11,11 +12,12 @@ import java.util.List;
 
 @Component
 public class DeviceInfoServiceImpl implements DeviceInfoService {
+
     @Autowired
     private DeviceInfoDAO deviceInfoDAO;
 
     @Override
-    public DeviceInfo findDeviceInfoById(int deviceId) {
+    public DeviceInfo findDeviceInfoById(String deviceId) {
         ExceptionUtil.runtimeExpWithNullCheck(deviceId, "[DAO.findDeviceInfoById] deviceId shouldn't be null!");
         return deviceInfoDAO.selectById(deviceId);
     }
@@ -36,17 +38,24 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
     }
 
     @Override
-    public List<DeviceInfo> selectListByGroup() {
+    public List<DeviceGroup> selectListByGroup() {
         return deviceInfoDAO.selectListByGroup();
     }
 
     @Override
-    public DeviceInfo selectBySdkBrandDeviceName(String sdkVersion, String releaseVersion, String deviceModel, String brand) {
+    public List<DeviceInfo> selectBySdkBrandDeviceName(String sdkVersion, String releaseVersion, String deviceModel, String brand) {
         ExceptionUtil.runtimeExpWithNullCheck(sdkVersion, "[DAO.selectBySdkBrandDeviceName] sdkVersion shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(releaseVersion, "[DAO.selectBySdkBrandDeviceName] releaseVersion shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(deviceModel, "[DAO.selectBySdkBrandDeviceName] deviceModel shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(brand, "[DAO.selectBySdkBrandDeviceName] brand shouldn't be null!");
         return deviceInfoDAO.selectBySdkBrandDeviceName(sdkVersion,releaseVersion, deviceModel, brand);
+    }
+
+    @Override
+    public DeviceInfo updateDeviceInfo(DeviceInfo deviceInfo) {
+        ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getDeviceId(), "[DAO.updateDeviceInfo] deviceId should not be null!");
+        deviceInfoDAO.update(deviceInfo);
+        return deviceInfoDAO.selectById(deviceInfo.getDeviceId());
     }
 
 

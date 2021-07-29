@@ -11,4 +11,6 @@ public interface TestCaseService {
     TestCase findTestCaseByUniqueId(int uniqueId);
 
     List<TestCase> selectList(int size);
+
+    List<TestCase> selectAvaliableTestCasesByDeviceId(List<String> deviceIds);
 }

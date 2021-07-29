@@ -20,4 +20,27 @@
         select * from test_case where deleted = 0
         order by id asc limit 0,${size}
     </select>
+
+    <select id="selectAvaliableTestCasesByDeviceId" resultMap="TestCaseMap">
+        select
+        A.id as id,
+        A.unique_id as unique_id,
+        A.name as name,
+        A.deleted as deleted,
+        A.create_time as createTime
+        from test_case A
+        left outer join test_runner B on B.test_case_id = A.unique_id
+        where
+        deleted = 0
+        and
+        (
+            (B.id is NULL)
+            or
+            (B.device_id NOT IN
+                <foreach collection="list" item="deviceId" index="index" open="(" close=")" separator=",">
+                    #{deviceId}
+                </foreach>
+            )
+        )
+    </select>
 </mapper>

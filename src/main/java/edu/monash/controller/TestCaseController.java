@@ -1,13 +1,18 @@
 package edu.monash.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import edu.monash.GlobalRef;
 import edu.monash.entity.DeviceInfo;
 import edu.monash.entity.TestCase;
-import edu.monash.service.DeviceInfoService;
-import edu.monash.service.TestCaseService;
-import edu.monash.util.ExceptionUtil;
+import edu.monash.entity.TestRunner;
 import edu.monash.util.FileUtil;
+import edu.monash.util.SocketClient;
+import edu.monash.webservice.DeviceWebService;
+import edu.monash.webservice.TestCaseWebService;
+import edu.monash.webservice.TestRunnerWebService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,59 +20,143 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/testCase")
 public class TestCaseController {
-    @Autowired
-    private DeviceInfoService deviceInfoService;
+    private static final Logger logger = LoggerFactory.getLogger(TestCaseController.class);
+
+    private static String aospFrameworkPrefix = "AOSP_F_";
+    private static String junitTestGenPrefix = "TestCase_";
 
     @Autowired
-    private TestCaseService testCaseService;
+    private DeviceWebService deviceWebService;
 
-    @RequestMapping("/generateAPK")
-    public void patchRun(HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
+    @Autowired
+    private TestRunnerWebService testRunnerWebService;
+
+    @Autowired
+    private TestCaseWebService testCaseWebService;
+
+    @RequestMapping("/generatePatchAPK")
+    public void generateAPK(HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
         // URL: http://localhost:8081/RemoteTest/testCase/generateAPK
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 
-        //insert deviceInfo
-        JSONObject deviceInfoJson = (JSONObject)JSONObject.parse(request.getParameter("deviceInfo"));
-        DeviceInfo deviceInfo = DeviceInfo.convert2DeviceInfo(deviceInfoJson);
-        DeviceInfo existDevice = deviceInfoService.findDeviceInfoById(deviceInfo.getDeviceId());
-        if(existDevice == null){
-            deviceInfoService.insertDeviceInfo(deviceInfo);
+        //step1. insert deviceInfo
+        DeviceInfo deviceInfo = deviceWebService.addDevice(request.getParameter("deviceInfo"));
+
+        logger.info("[deviceInfo] deviceInfo:" + deviceInfo.toString());
+
+        //step2. collect test cases
+        List<TestCase> testCaseList = testCaseWebService.getAvaliableTestCasesByDeviceId(deviceInfo.getDeviceId());
+
+        if (CollectionUtils.isNotEmpty(testCaseList)) {
+            for (TestCase testCase : testCaseList) {
+                logger.info("[testCaseList] testCaseList:" + testCase.getName());
+            }
         }
 
-        //collect test cases
-        Integer testCaseNumber = Integer.parseInt(request.getParameter("testCaseNumber"));
-        ExceptionUtil.runtimeExpWithNullCheck(testCaseNumber, "Test Case Number should be greater than 0");
-        List<TestCase> testCaseList = testCaseService.selectList(testCaseNumber);
+        //step3. dispacth [Load balancing strategy]
+        List<TestCase> dispatchTestCases = testCaseWebService.dispatchTestCases(testCaseList, deviceInfo);
 
-        //copy testcases from original path to destination
-        for(TestCase testCase : testCaseList){
-            FileUtil.copyFile(GlobalRef.testCaseOriginPath, GlobalRef.testCaseDestinationPath, testCase.getName()+".java");
+        if (CollectionUtils.isNotEmpty(dispatchTestCases)) {
+            for (TestCase testCase : dispatchTestCases) {
+                logger.info("[dispatchTestCases] dispatchTestCases:" + testCase.getName());
+            }
         }
 
-        //generate instrumented apk
-        String command = "./gradlew assembleAndroidTest -DtestBuildType=debug";
-        Process process = Runtime.getRuntime().exec(command, null, new File(GlobalRef.generateInstrumentAPKPath));
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            ExceptionUtil.runtimeExp("Generate instrumented apk fail!");
-        }
+        //step4. copy testcases from original path to destination
+        copyTestCases2TargetPath(dispatchTestCases);
 
-        //output instrumented apk
+        //step5. generate apk patch in /Users/xsun0035/workspace/monash/BasicUnitAndroidTest
+        SocketClient.chmod777(GlobalRef.apkBuildPath);
+        SocketClient.generateAPKPatch();
+
+        //step6. output instrumented apk
         OutputStream out = response.getOutputStream();
-        File instrumentAPK = new File(GlobalRef.instrumentAPKPath);
-        response.addHeader("Content-Disposition", "attachment;filename=" + instrumentAPK.getName());
+        File patchAPK = new File(GlobalRef.patchAPKPath);
+        response.addHeader("Content-Disposition", "attachment;filename=" + patchAPK.getName());
         response.setContentType("application/octet-stream");
-        byte[] bytes = new byte[(int)instrumentAPK.length()];
-        FileInputStream is = new FileInputStream(instrumentAPK);
+        byte[] bytes = new byte[(int) patchAPK.length()];
+        FileInputStream is = new FileInputStream(patchAPK);
         is.read(bytes);
         is.close();
         out.write(bytes);
 
+    }
+
+    @RequestMapping("/collectRes")
+    public void collectRes(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectRes
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        //step1. add testRunnerRecord
+        TestRunner testRunner = testRunnerWebService.addRecord(request.getParameter("testCaseRecord"), request.getParameter("deviceId"));
+
+    }
+
+    private void copyTestCases2TargetPath(List<TestCase> dispatchTestCases) throws IOException {
+        SocketClient.chmod777(GlobalRef.jUnitTestGenTestCaseDestinationPath);
+        SocketClient.chmod777(GlobalRef.aospFrameworkTestCaseDestinationPath);
+
+        cleanExistTestCase();
+
+        for (TestCase testCase : dispatchTestCases) {
+            System.out.println("start copy:"+testCase);
+            try {
+                //Dispatch tests of different origin
+                if (testCase.getName().startsWith(aospFrameworkPrefix)) {
+                    testCase.setName(testCase.getName().replace(aospFrameworkPrefix, ""));
+                    File testFile = new File(GlobalRef.aospFrameworkTestCaseOriginPath+testCase.getName()+".java");
+                    String line = "";
+                    BufferedReader br = new BufferedReader(new FileReader(testFile));
+                    String packagePath = "";
+
+                    while ((line = br.readLine()) != null) {
+                        if (line.startsWith("package")) {
+                            packagePath = line.replaceAll("package ", "").replace(";", "").replace(".", "/");
+                            break;
+                        }
+                    }
+                    File theDir = new File(GlobalRef.aospFrameworkTestCaseDestinationPath + packagePath);
+                    if (!theDir.exists()) {
+                        System.out.println("mkdir:"+theDir);
+                        theDir.mkdirs();
+                    }
+
+                    FileUtils.copyFileToDirectory(new File(GlobalRef.aospFrameworkTestCaseOriginPath + testCase.getName() + ".java"), theDir);
+                    System.out.println("copyFile aospFramework success:"+GlobalRef.aospFrameworkTestCaseDestinationPath);
+
+                } else if (testCase.getName().startsWith(junitTestGenPrefix)) {
+                    FileUtil.copyFile(GlobalRef.jUnitTestGenTestCaseOriginPath, GlobalRef.jUnitTestGenTestCaseDestinationPath, testCase.getName() + ".java");
+                    System.out.println("copyFile junitTestGen success:"+GlobalRef.aospFrameworkTestCaseDestinationPath);
+                }
+            } catch (FileNotFoundException e) {
+                logger.info("[Test Case File not found] Skip test case:" + testCase.getName());
+                continue;
+            }
+        }
+    }
+
+    private void cleanExistTestCase() throws IOException {
+        FileUtils.cleanDirectory(new File(GlobalRef.jUnitTestGenTestCaseDestinationPath));
+
+        List<String> aospTests = new ArrayList<>();
+        FileUtil.getFileNameList(GlobalRef.aospFrameworkTestCaseOriginPath, aospTests);
+        List<String> tinkerExistTests = new ArrayList<>();
+        FileUtil.getTestFileList(GlobalRef.aospFrameworkTestCaseDestinationPath, tinkerExistTests);
+        for (String fileName : tinkerExistTests) {
+            //check if it is real Test Case in /home/ubuntu/AOSP_framework_tests/
+            File existTest = new File(fileName);
+            if(aospTests.contains(existTest.getName())){
+                existTest.delete();
+                System.out.println("success:"+fileName);
+            }
+        }
     }
 }

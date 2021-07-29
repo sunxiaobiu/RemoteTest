@@ -1,6 +1,8 @@
 package edu.monash.dao;
 
+import edu.monash.entity.DeviceGroup;
 import edu.monash.entity.DeviceInfo;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -8,12 +10,17 @@ import java.util.List;
 @Repository
 public interface DeviceInfoDAO {
 
-    DeviceInfo selectById(int deviceId);
+    DeviceInfo selectById(@Param("deviceId")String deviceId);
 
     int insert(DeviceInfo deviceInfo);
 
-    List<DeviceInfo> selectListByGroup();
+    List<DeviceGroup> selectListByGroup();
 
-    DeviceInfo selectBySdkBrandDeviceName(String sdkVersion, String releaseVersion, String deviceModel, String brand);
+    List<DeviceInfo> selectBySdkBrandDeviceName(@Param("sdkVersion")String sdkVersion,
+                                                @Param("releaseVersion")String releaseVersion,
+                                                @Param("deviceModel")String deviceModel,
+                                                @Param("brand")String brand);
+
+    int update(DeviceInfo deviceInfo);
 
 }

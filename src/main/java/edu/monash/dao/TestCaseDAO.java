@@ -12,4 +12,6 @@ public interface TestCaseDAO {
     TestCase selectByUniqueId(@Param("uniqueId") int uniqueId);
 
     List<TestCase> selectList(@Param("size") int size);
+
+    List<TestCase> selectAvaliableTestCasesByDeviceId(List<String> deviceIds);
 }

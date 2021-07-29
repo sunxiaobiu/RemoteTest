@@ -1,6 +1,0 @@
-edu/monash/entity/TestRunner.class
-edu/monash/dao/TestCaseDAO.class
-edu/monash/entity/TestCase.class
-edu/monash/service/TestCaseService.class
-edu/monash/entity/TestRunnerRecord.class
-edu/monash/entity/DeviceInfo.class

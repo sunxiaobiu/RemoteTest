@@ -23,7 +23,14 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<TestCase> selectList(int size) {
-        ExceptionUtil.runtimeExpWithNullCheck(size, "[DAO.selectList] deviceId shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(size, "[DAO.selectList] size shouldn't be null!");
         return testCaseDAO.selectList(size);
     }
+
+    @Override
+    public List<TestCase> selectAvaliableTestCasesByDeviceId(List<String> deviceIds) {
+        ExceptionUtil.runtimeExpWithNullCheck(deviceIds, "[DAO.selectAvaliableTestCasesByDeviceId] deviceIds shouldn't be null!");
+        return testCaseDAO.selectAvaliableTestCasesByDeviceId(deviceIds);
+    }
+
 }
