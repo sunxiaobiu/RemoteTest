@@ -23,7 +23,7 @@
         	*
         from
         	test_runner
-        where device_id = #{deviceId} and is_success = 1
+        where device_id = #{deviceId}
         order by id asc
     </select>
 

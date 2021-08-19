@@ -52,7 +52,7 @@ public class TestCaseController {
         logger.info("[deviceInfo] deviceInfo:" + deviceInfo.toString());
 
         //step2. collect test cases
-        List<TestCase> testCaseList = testCaseWebService.getAvaliableTestCasesByDeviceId(deviceInfo.getDeviceId());
+        List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId());
 
         if (CollectionUtils.isNotEmpty(testCaseList)) {
             for (TestCase testCase : testCaseList) {
@@ -60,8 +60,9 @@ public class TestCaseController {
             }
         }
 
-        //step3. dispacth [Load balancing strategy]
-        List<TestCase> dispatchTestCases = testCaseWebService.dispatchTestCases(testCaseList, deviceInfo);
+        //step3. todo dispacth [Load balancing strategy]
+        //List<TestCase> dispatchTestCases = testCaseWebService.dispatchTestCases(testCaseList, deviceInfo);
+        List<TestCase> dispatchTestCases = testCaseList;
 
         if (CollectionUtils.isNotEmpty(dispatchTestCases)) {
             for (TestCase testCase : dispatchTestCases) {
