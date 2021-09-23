@@ -1,5 +1,6 @@
 package edu.monash.controller;
 
+import com.google.gson.Gson;
 import edu.monash.GlobalRef;
 import edu.monash.entity.DeviceInfo;
 import edu.monash.entity.TestCase;
@@ -90,6 +91,22 @@ public class TestCaseController {
 
     }
 
+    @RequestMapping("/collectExecutedTests")
+    public void collectExecutedTests(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectExecutedTests
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        //collect Executed Tests
+        List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceId(request.getParameter("deviceId"));
+
+        PrintWriter out = response.getWriter();
+        String resJson = new Gson().toJson(testCaseIds);
+        response.setContentType("application/json");
+        out.print(resJson);
+        out.flush();
+    }
+
     @RequestMapping("/collectRes")
     public void collectRes(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // URL: http://localhost:8081/RemoteTest/testCase/collectRes
@@ -111,32 +128,32 @@ public class TestCaseController {
             System.out.println("start copy:"+testCase);
             try {
                 //Dispatch tests of different origin
-                if (testCase.getName().startsWith(aospFrameworkPrefix)) {
-                    testCase.setName(testCase.getName().replace(aospFrameworkPrefix, ""));
-                    File testFile = new File(GlobalRef.aospFrameworkTestCaseOriginPath+testCase.getName()+".java");
-                    String line = "";
-                    BufferedReader br = new BufferedReader(new FileReader(testFile));
-                    String packagePath = "";
-
-                    while ((line = br.readLine()) != null) {
-                        if (line.startsWith("package")) {
-                            packagePath = line.replaceAll("package ", "").replace(";", "").replace(".", "/");
-                            break;
-                        }
-                    }
-                    File theDir = new File(GlobalRef.aospFrameworkTestCaseDestinationPath + packagePath);
-                    if (!theDir.exists()) {
-                        System.out.println("mkdir:"+theDir);
-                        theDir.mkdirs();
-                    }
-
-                    FileUtils.copyFileToDirectory(new File(GlobalRef.aospFrameworkTestCaseOriginPath + testCase.getName() + ".java"), theDir);
-                    System.out.println("copyFile aospFramework success:"+GlobalRef.aospFrameworkTestCaseDestinationPath);
-
-                } else if (testCase.getName().startsWith(junitTestGenPrefix)) {
+//                if (testCase.getName().startsWith(aospFrameworkPrefix)) {
+//                    testCase.setName(testCase.getName().replace(aospFrameworkPrefix, ""));
+//                    File testFile = new File(GlobalRef.aospFrameworkTestCaseOriginPath+testCase.getName()+".java");
+//                    String line = "";
+//                    BufferedReader br = new BufferedReader(new FileReader(testFile));
+//                    String packagePath = "";
+//
+//                    while ((line = br.readLine()) != null) {
+//                        if (line.startsWith("package")) {
+//                            packagePath = line.replaceAll("package ", "").replace(";", "").replace(".", "/");
+//                            break;
+//                        }
+//                    }
+//                    File theDir = new File(GlobalRef.aospFrameworkTestCaseDestinationPath + packagePath);
+//                    if (!theDir.exists()) {
+//                        System.out.println("mkdir:"+theDir);
+//                        theDir.mkdirs();
+//                    }
+//
+//                    FileUtils.copyFileToDirectory(new File(GlobalRef.aospFrameworkTestCaseOriginPath + testCase.getName() + ".java"), theDir);
+//                    System.out.println("copyFile aospFramework success:"+GlobalRef.aospFrameworkTestCaseDestinationPath);
+//
+//                } else if (testCase.getName().startsWith(junitTestGenPrefix)) {
                     FileUtil.copyFile(GlobalRef.jUnitTestGenTestCaseOriginPath, GlobalRef.jUnitTestGenTestCaseDestinationPath, testCase.getName() + ".java");
-                    System.out.println("copyFile junitTestGen success:"+GlobalRef.aospFrameworkTestCaseDestinationPath);
-                }
+                    System.out.println("copyFile junitTestGen success:"+testCase.getName());
+//                }
             } catch (FileNotFoundException e) {
                 logger.info("[Test Case File not found] Skip test case:" + testCase.getName());
                 continue;
