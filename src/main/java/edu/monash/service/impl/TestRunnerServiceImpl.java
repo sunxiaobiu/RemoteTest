@@ -35,4 +35,12 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         ExceptionUtil.runtimeExpWithNullCheck(id, "[DAO.selectById] id shouldn't be null!");
         return testRunnerDAO.selectById(id);
     }
+
+    @Override
+    public List<TestRunner> selectListByDeviceIdAndDispatchStrategy(String deviceId, int dispatchStrategy) {
+        ExceptionUtil.runtimeExpWithNullCheck(deviceId, "[DAO.selectListByDeviceIdAndDispatchStrategy] deviceId shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(dispatchStrategy, "[DAO.selectListByDeviceIdAndDispatchStrategy] dispatchStrategy shouldn't be null!");
+        return testRunnerDAO.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
+    }
+
 }

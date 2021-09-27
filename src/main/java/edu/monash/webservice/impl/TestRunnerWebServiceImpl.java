@@ -41,9 +41,33 @@ public class TestRunnerWebServiceImpl implements TestRunnerWebService {
         }
 
         for (TestRunner testRunner : executedTestCases) {
-            testCaseIdList.add(Regex.getSubUtilSimple(testRunner.getTestCaseId(), "(.*?\\.)"));
+            testCaseIdList.add("tinker.sample.android.androidtest."+Regex.getSubUtilSimple(testRunner.getTestCaseId(), "(.*?\\.)").replace(".",""));
         }
         return testCaseIdList;
+    }
+
+    @Override
+    public List<String> getExecutedTestsByDeviceIdAndDispatchStrategy(String deviceId, int dispatchStrategy) {
+        List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
+
+        List<String> testCaseIdList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(executedTestCases)) {
+            return testCaseIdList;
+        }
+
+        for (TestRunner testRunner : executedTestCases) {
+            testCaseIdList.add("tinker.sample.android.androidtest."+Regex.getSubUtilSimple(testRunner.getTestCaseId(), "(.*?\\.)").replace(".",""));
+        }
+        return testCaseIdList;
+    }
+
+    @Override
+    public boolean existTestRunnerForStrategy(String deviceId, int dispatchStrategy) {
+        List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
+        if(CollectionUtils.isNotEmpty(executedTestCases)){
+            return true;
+        }
+        return false;
     }
 
 }

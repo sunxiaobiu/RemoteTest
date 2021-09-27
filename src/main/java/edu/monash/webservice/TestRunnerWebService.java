@@ -12,4 +12,8 @@ public interface TestRunnerWebService {
 
     public List<String> getExecutedTestsByDeviceId(String deviceId);
 
+    public List<String> getExecutedTestsByDeviceIdAndDispatchStrategy(String deviceId, int dispatchStrategy);
+
+    public boolean existTestRunnerForStrategy(String deviceId, int dispatchStrategy);
+
 }

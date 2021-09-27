@@ -14,4 +14,6 @@ public interface TestRunnerService {
 
     TestRunner selectById(int id);
 
+    List<TestRunner> selectListByDeviceIdAndDispatchStrategy(String deviceId, int dispatchStrategy);
+
 }

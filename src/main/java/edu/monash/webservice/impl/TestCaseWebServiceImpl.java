@@ -73,9 +73,9 @@ public class TestCaseWebServiceImpl implements TestCaseWebService {
     }
 
     @Override
-    public List<TestCase> getNotYetExecutedTestCases(String deviceId) {
+    public List<TestCase> getNotYetExecutedTestCases(String deviceId, int dispatchStrategy) {
         List<TestCase> allTestCases = testCaseService.selectList(maxSize);
-        List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceId(deviceId);
+        List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
         List<String> testRunnerList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(executedTestCases)) {
             for(TestRunner testRunner : executedTestCases){

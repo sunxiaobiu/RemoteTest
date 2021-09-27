@@ -13,6 +13,7 @@ public class TestRunner {
     private Date updateTime;
     private boolean isSuccess;
     private String result;
+    private int dispatchStrategy;
 
     public int getId() {
         return id;
@@ -70,12 +71,21 @@ public class TestRunner {
         this.result = result;
     }
 
+    public int getDispatchStrategy() {
+        return dispatchStrategy;
+    }
+
+    public void setDispatchStrategy(int dispatchStrategy) {
+        this.dispatchStrategy = dispatchStrategy;
+    }
+
     public static TestRunner convert2TestRunner(JSONObject jsonObject){
         TestRunner testRunner = new TestRunner();
 
         testRunner.setTestCaseId(jsonObject.get("testCaseName").toString());
         testRunner.setSuccess(Boolean.valueOf(jsonObject.get("isSuccess").toString()));
         testRunner.setResult(jsonObject.get("result").toString());
+        testRunner.setDispatchStrategy(Integer.valueOf(jsonObject.get("dispatchStrategy").toString()));
 
         return testRunner;
     }

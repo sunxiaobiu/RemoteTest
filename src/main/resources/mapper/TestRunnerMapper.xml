@@ -11,6 +11,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="is_success" property="isSuccess"/>
+        <result column="dispatch_strategy" property="dispatchStrategy"/>
         <result column="result" property="result"/>
     </resultMap>
 
@@ -27,6 +28,17 @@
         order by id asc
     </select>
 
+	<select id="selectListByDeviceIdAndDispatchStrategy" resultMap="TestRunnerMap">
+        select
+        	*
+        from
+        	test_runner
+        where
+        	device_id = #{deviceId}
+        and dispatch_strategy = #{dispatchStrategy}
+        order by id asc
+    </select>
+
     <insert id="insert" parameterType="edu.monash.entity.TestRunner" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO test_runner(
 		test_case_id,
@@ -34,7 +46,8 @@
 		create_time,
 		update_time,
 		is_success,
-		result
+		result,
+		dispatch_strategy
 		)
 		VALUES(
 		#{testCaseId},
@@ -42,7 +55,8 @@
 		now(),
 		now(),
 		#{isSuccess},
-		#{result}
+		#{result},
+		#{dispatchStrategy}
 		);
 	</insert>
 
@@ -57,6 +71,6 @@
 		</if>
 		update_time = now()
 	</set>
-	where test_case_id = #{testRunner.testCaseId} and device_id = #{testRunner.deviceId}
+	where test_case_id = #{testRunner.testCaseId} and device_id = #{testRunner.deviceId} and dispatch_strategy = #{dispatchStrategy}
 	</update>
 </mapper>

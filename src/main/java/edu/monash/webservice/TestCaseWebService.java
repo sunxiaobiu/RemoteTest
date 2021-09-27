@@ -13,5 +13,5 @@ public interface TestCaseWebService {
 
     public List<TestCase> dispatchTestCases(List<TestCase> avaliabletestCaseList, DeviceInfo deviceInfo);
 
-    public List<TestCase> getNotYetExecutedTestCases(String deviceId);
+    public List<TestCase> getNotYetExecutedTestCases(String deviceId, int dispatchStrategy);
 }

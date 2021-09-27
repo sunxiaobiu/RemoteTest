@@ -46,14 +46,16 @@ public class TestCaseController {
         // URL: http://localhost:8081/RemoteTest/testCase/generateAPK
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
+        logger.info("[deviceInfo] deviceInfo========");
 
         //step1. insert deviceInfo
         DeviceInfo deviceInfo = deviceWebService.addDevice(request.getParameter("deviceInfo"));
+        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
 
         logger.info("[deviceInfo] deviceInfo:" + deviceInfo.toString());
 
         //step2. collect test cases
-        List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId());
+        List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId(), dispatchStrategy);
 
         if (CollectionUtils.isNotEmpty(testCaseList)) {
             for (TestCase testCase : testCaseList) {
@@ -97,14 +99,27 @@ public class TestCaseController {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 
+        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+
         //collect Executed Tests
-        List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceId(request.getParameter("deviceId"));
+        List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceIdAndDispatchStrategy(request.getParameter("deviceId"), dispatchStrategy);
 
         PrintWriter out = response.getWriter();
         String resJson = new Gson().toJson(testCaseIds);
         response.setContentType("application/json");
         out.print(resJson);
         out.flush();
+    }
+
+    @RequestMapping("/checkDispatchStrategy")
+    public boolean checkDispatchStrategy(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectRes
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+
+        return testRunnerWebService.existTestRunnerForStrategy(request.getParameter("deviceId"), dispatchStrategy);
     }
 
     @RequestMapping("/collectRes")
