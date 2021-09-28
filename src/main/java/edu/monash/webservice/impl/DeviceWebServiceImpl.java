@@ -53,4 +53,18 @@ public class DeviceWebServiceImpl implements DeviceWebService {
             return existDevice;
         }
     }
+
+    @Override
+    public DeviceInfo getDeviceById(String deviceId) {
+        return deviceInfoService.findDeviceInfoById(deviceId);
+    }
+
+    @Override
+    public void updateDispatchStrategy(String deviceInfoRequest) {
+        JSONObject deviceInfoJson = (JSONObject)JSONObject.parse(deviceInfoRequest);
+        DeviceInfo deviceInfo = DeviceInfo.convert2DeviceInfo(deviceInfoJson);
+        deviceInfoService.updateDeviceInfo(deviceInfo);
+    }
+
+
 }

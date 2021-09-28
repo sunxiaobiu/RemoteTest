@@ -21,6 +21,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         ExceptionUtil.runtimeExpWithNullCheck(testRunner.getDeviceId(), "[DAO.insertTestRunner] deviceId shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(testRunner.isSuccess(), "[DAO.insertTestRunner] isSuccess shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(testRunner.getResult(), "[DAO.insertTestRunner] result shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(testRunner.getDispatchStrategy(), "[DAO.insertTestRunner] DispatchStrategy shouldn't be null!");
         return testRunnerDAO.insert(testRunner);
     }
 

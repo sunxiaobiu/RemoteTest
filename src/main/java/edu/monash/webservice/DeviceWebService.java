@@ -14,4 +14,8 @@ public interface DeviceWebService {
 
     public DeviceInfo addDevice(String deviceInfoRequest);
 
+    public DeviceInfo getDeviceById(String deviceId);
+
+    public void updateDispatchStrategy(String deviceInfoRequest);
+
 }

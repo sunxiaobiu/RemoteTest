@@ -34,6 +34,7 @@ public class DeviceInfoServiceImpl implements DeviceInfoService {
         ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getHardwareName(), "[DAO.insertDeviceInfo] hardwareName shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getLanguage(), "[DAO.insertDeviceInfo] language shouldn't be null!");
         ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getScreenSize(), "[DAO.insertDeviceInfo] screenSize shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(deviceInfo.getDispatchStrategy(), "[DAO.insertDeviceInfo] DispatchStrategy shouldn't be null!");
         return deviceInfoDAO.insert(deviceInfo);
     }
 

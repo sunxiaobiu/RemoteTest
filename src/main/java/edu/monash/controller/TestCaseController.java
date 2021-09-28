@@ -99,10 +99,10 @@ public class TestCaseController {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 
-        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+        DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
 
         //collect Executed Tests
-        List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceIdAndDispatchStrategy(request.getParameter("deviceId"), dispatchStrategy);
+        List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceIdAndDispatchStrategy(request.getParameter("deviceId"), deviceInfo.getDispatchStrategy());
 
         PrintWriter out = response.getWriter();
         String resJson = new Gson().toJson(testCaseIds);
@@ -112,14 +112,30 @@ public class TestCaseController {
     }
 
     @RequestMapping("/checkDispatchStrategy")
-    public boolean checkDispatchStrategy(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void checkDispatchStrategy(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // URL: http://localhost:8081/RemoteTest/testCase/collectRes
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 
-        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+//        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+//
+//        return testRunnerWebService.existTestRunnerForStrategy(request.getParameter("deviceId"), dispatchStrategy);
+        DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
 
-        return testRunnerWebService.existTestRunnerForStrategy(request.getParameter("deviceId"), dispatchStrategy);
+        PrintWriter out = response.getWriter();
+        String resJson = new Gson().toJson(deviceInfo.getDispatchStrategy());
+        response.setContentType("application/json");
+        out.print(resJson);
+        out.flush();
+    }
+
+    @RequestMapping("/updateDevice")
+    public void updateDevice(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectRes
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        deviceWebService.updateDispatchStrategy(request.getParameter("deviceInfo"));
     }
 
     @RequestMapping("/collectRes")

@@ -18,7 +18,8 @@
         <result column="hardware_name" property="hardwareName"/>
         <result column="language" property="language"/>
         <result column="screen_size" property="screenSize"/>
-    </resultMap>
+		<result column="dispatch_strategy" property="dispatchStrategy"/>
+	</resultMap>
 
 	<resultMap id="DeviceGroupMap" type="DeviceGroup">
 		<!-- column是数据库表的列名 , property是对应实体类的属性名 -->
@@ -45,7 +46,8 @@
 		device_name,
 		hardware_name,
 		language,
-		screen_size
+		screen_size,
+		dispatch_strategy
 		)
 		VALUES(
 		#{deviceId},
@@ -59,7 +61,8 @@
 		#{deviceName},
 		#{hardwareName},
 		#{language},
-		#{screenSize}
+		#{screenSize},
+		#{dispatchStrategy}
 		);
 	</insert>
 
@@ -87,35 +90,38 @@
 	<update id="update" parameterType="edu.monash.entity.DeviceInfo">
 	update device_info
 	<set>
-		<if test="deviceInfo.sdkVersion != null">
-			sdk_version = #{deviceInfo.sdkVersion,jdbcType=VARCHAR},
+		<if test="sdkVersion != null">
+			sdk_version = #{sdkVersion,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.releaseVersion != null">
-			release_version = #{deviceInfo.releaseVersion,jdbcType=VARCHAR},
+		<if test="releaseVersion != null">
+			release_version = #{releaseVersion,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.deviceModel != null">
-			device_model = #{deviceInfo.deviceModel,jdbcType=VARCHAR},
+		<if test="deviceModel != null">
+			device_model = #{deviceModel,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.brand != null">
-			brand = #{deviceInfo.brand,jdbcType=VARCHAR},
+		<if test="brand != null">
+			brand = #{brand,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.host != null">
-			host = #{deviceInfo.host,jdbcType=VARCHAR},
+		<if test="host != null">
+			host = #{host,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.deviceName != null">
-			device_name = #{deviceInfo.deviceName,jdbcType=VARCHAR},
+		<if test="deviceName != null">
+			device_name = #{deviceName,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.hardwareName != null">
-			hardware_name = #{deviceInfo.hardwareName,jdbcType=VARCHAR},
+		<if test="hardwareName != null">
+			hardware_name = #{hardwareName,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.language != null">
-			language = #{deviceInfo.language,jdbcType=VARCHAR},
+		<if test="language != null">
+			language = #{language,jdbcType=VARCHAR},
 		</if>
-		<if test="deviceInfo.screenSize != null">
-			screen_size = #{deviceInfo.screenSize,jdbcType=VARCHAR},
+		<if test="screenSize != null">
+			screen_size = #{screenSize,jdbcType=VARCHAR},
+		</if>
+		<if test="dispatchStrategy != null">
+			dispatch_strategy = #{dispatchStrategy,jdbcType=INTEGER},
 		</if>
 		update_time = now()
 	</set>
-	where device_id = #{deviceInfo.deviceId}
+	where device_id = #{deviceId}
 	</update>
 </mapper>

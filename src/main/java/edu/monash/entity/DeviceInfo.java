@@ -19,6 +19,7 @@ public class DeviceInfo {
     private String hardwareName;
     private String language;
     private String screenSize;
+    private int dispatchStrategy;
 
     public int getId() {
         return id;
@@ -137,6 +138,7 @@ public class DeviceInfo {
         deviceInfo.setHardwareName(jsonObject.get("hardware").toString());
         deviceInfo.setLanguage(jsonObject.get("language").toString());
         deviceInfo.setScreenSize(jsonObject.get("screenSize").toString());
+        deviceInfo.setDispatchStrategy(Integer.valueOf(jsonObject.get("dispatchStrategy").toString()));
 
         return deviceInfo;
     }
@@ -170,7 +172,18 @@ public class DeviceInfo {
         if(!this.screenSize.equals(deviceInfo.getScreenSize())){
             return false;
         }
+        if(this.dispatchStrategy != deviceInfo.getDispatchStrategy()){
+            return false;
+        }
         return true;
+    }
+
+    public int getDispatchStrategy() {
+        return dispatchStrategy;
+    }
+
+    public void setDispatchStrategy(int dispatchStrategy) {
+        this.dispatchStrategy = dispatchStrategy;
     }
 
     public String toString(){
@@ -187,7 +200,8 @@ public class DeviceInfo {
                 .append("deviceName:").append(this.deviceName).append(";")
                 .append("hardwareName:").append(this.hardwareName).append(";")
                 .append("language:").append(this.language).append(";")
-                .append("screenSize:").append(this.screenSize).append(";");
+                .append("screenSize:").append(this.screenSize).append(";")
+                .append("dispatchStrategy:").append(this.dispatchStrategy).append(";");
         return stringBuilder.toString();
     }
 
