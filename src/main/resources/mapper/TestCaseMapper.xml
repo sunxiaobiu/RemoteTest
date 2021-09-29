@@ -21,6 +21,15 @@
         order by id asc limit 0,${size}
     </select>
 
+    <select id="selectFromStartToEnd" resultMap="TestCaseMap">
+        select * from test_case
+        where
+        deleted = 0
+        AND id <![CDATA[ >= ]]> #{startId}
+        AND id <![CDATA[ <= ]]> #{endId}
+        order by id asc
+    </select>
+
     <select id="selectAvaliableTestCasesByDeviceId" resultMap="TestCaseMap">
         select
         A.id as id,

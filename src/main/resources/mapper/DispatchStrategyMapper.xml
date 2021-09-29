@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="edu.monash.dao.DispatchStrategyDAO">
+
+	<resultMap id="DispatchStrategyMap" type="DispatchStrategy">
+		<id column="id" property="id"/>
+		<!-- column是数据库表的列名 , property是对应实体类的属性名 -->
+		<result column="device_id" property="deviceId"/>
+		<result column="start_id" property="startId"/>
+		<result column="end_id" property="endId"/>
+		<result column="batch_size" property="batchSize"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+
+    <insert id="insert" parameterType="edu.monash.entity.DispatchStrategy" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO dispatch_strategy(
+		device_id,
+		create_time,
+		start_id,
+		end_id,
+		batch_size
+		)
+		VALUES(
+		#{deviceId},
+		now(),
+		#{startId},
+		#{endId},
+		#{batchSize}
+		);
+	</insert>
+
+    <select id="selectByDeviceIdAndBatchSize" resultMap="DeviceInfoMap">
+        select * from dispatch_strategy
+        WHERE
+        	device_id = #{deviceId}
+        and batch_size = #{batchSize}
+    </select>
+
+	<update id="update" parameterType="edu.monash.entity.DispatchStrategy">
+		update dispatch_strategy
+		<set>
+			<if test="startId != null">
+				start_id = #{startId,jdbcType=INTEGER},
+			</if>
+			<if test="endId != null">
+				end_id = #{endId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where device_id = #{deviceId}
+		and batch_size = #{batchSize}
+	</update>
+
+</mapper>

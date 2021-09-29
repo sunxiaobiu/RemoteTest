@@ -33,4 +33,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseDAO.selectAvaliableTestCasesByDeviceId(deviceIds);
     }
 
+    @Override
+    public List<TestCase> selectFromStartToEnd(int startId, int endId) {
+        ExceptionUtil.runtimeExpWithNullCheck(startId, "[DAO.selectFromStartToEnd] startId shouldn't be null!");
+        ExceptionUtil.runtimeExpWithNullCheck(endId, "[DAO.selectFromStartToEnd] endId shouldn't be null!");
+        return testCaseDAO.selectFromStartToEnd(startId, endId);
+    }
+
 }

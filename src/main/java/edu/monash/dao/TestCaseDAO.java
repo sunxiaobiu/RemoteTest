@@ -14,4 +14,7 @@ public interface TestCaseDAO {
     List<TestCase> selectList(@Param("size") int size);
 
     List<TestCase> selectAvaliableTestCasesByDeviceId(List<String> deviceIds);
+
+    List<TestCase> selectFromStartToEnd(@Param("startId")int startId,
+                                        @Param("endId")int endId);
 }
