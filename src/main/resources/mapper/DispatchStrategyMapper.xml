@@ -30,7 +30,7 @@
 		);
 	</insert>
 
-    <select id="selectByDeviceIdAndBatchSize" resultMap="DeviceInfoMap">
+    <select id="selectByDeviceIdAndBatchSize" resultMap="DispatchStrategyMap">
         select * from dispatch_strategy
         WHERE
         	device_id = #{deviceId}

@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DispatchStrategyServiceImpl implements DispatchStrategyWebService {
+public class DispatchStrategyWebServiceImpl implements DispatchStrategyWebService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DispatchStrategyServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DispatchStrategyWebServiceImpl.class);
 
     @Autowired
     private DispatchStrategyService dispatchStrategyService;
@@ -28,8 +28,8 @@ public class DispatchStrategyServiceImpl implements DispatchStrategyWebService {
             dispatchStrategy.setId(dispatchStrategyService.insertDispatchStrategy(dispatchStrategy));
             return dispatchStrategy;
         }else{
-            int startId = dispatchStrategy.getStartId();
-            int endId = dispatchStrategy.getEndId();
+            int startId = existDispatchStrategy.getStartId();
+            int endId = existDispatchStrategy.getEndId();
             int batchSize = dispatchStrategy.getBatchSize();
             dispatchStrategy.setStartId(startId + batchSize);
             dispatchStrategy.setEndId(endId + batchSize);
