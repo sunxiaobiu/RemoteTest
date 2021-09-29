@@ -1,9 +1,6 @@
 package edu.monash.webservice.impl;
 
-import edu.monash.entity.DeviceGroup;
-import edu.monash.entity.DeviceInfo;
-import edu.monash.entity.TestCase;
-import edu.monash.entity.TestRunner;
+import edu.monash.entity.*;
 import edu.monash.service.DeviceInfoService;
 import edu.monash.service.TestCaseService;
 import edu.monash.service.TestRunnerService;
@@ -94,4 +91,25 @@ public class TestCaseWebServiceImpl implements TestCaseWebService {
 
         return needExecute;
     }
+
+    @Override
+    public List<TestCase> getTestsFromStartId2EndId(int startId, int endId) {
+        return testCaseService.selectFromStartToEnd(startId, endId);
+    }
+
+    @Override
+    public List<String> getBatchTests(String deviceId, DispatchStrategy dispatchStrategy) {
+        List<TestCase> testCases = testCaseService.selectFromStartToEnd(dispatchStrategy.getStartId(), dispatchStrategy.getEndId());
+
+        List<String> testCaseIdList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(testCases)) {
+            return testCaseIdList;
+        }
+
+        for (TestCase testCase : testCases) {
+            testCaseIdList.add("tinker.sample.android.androidtest."+testCase.getUniqueId());
+        }
+        return testCaseIdList;
+    }
+
 }

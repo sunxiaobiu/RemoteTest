@@ -1,5 +1,7 @@
 package edu.monash.entity;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.Date;
 
 public class DispatchStrategy {
@@ -67,6 +69,17 @@ public class DispatchStrategy {
                 .append("endId:").append(this.endId).append(";")
                 .append("batchSize:").append(this.batchSize).append(";");
         return stringBuilder.toString();
+    }
+
+    public static DispatchStrategy convert2DispatchStrategy(JSONObject jsonObject){
+        DispatchStrategy dispatchStrategy = new DispatchStrategy();
+
+        dispatchStrategy.setDeviceId(jsonObject.get("deviceId").toString());
+        dispatchStrategy.setStartId(Integer.valueOf(jsonObject.get("startId").toString()));
+        dispatchStrategy.setEndId(Integer.valueOf(jsonObject.get("endId").toString()));
+        dispatchStrategy.setBatchSize(Integer.valueOf(jsonObject.get("batchSize").toString()));
+
+        return dispatchStrategy;
     }
 
 }

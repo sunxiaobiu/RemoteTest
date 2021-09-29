@@ -35,6 +35,8 @@
         WHERE
         	device_id = #{deviceId}
         and batch_size = #{batchSize}
+        order by end_id desc
+        limit 1
     </select>
 
 	<update id="update" parameterType="edu.monash.entity.DispatchStrategy">

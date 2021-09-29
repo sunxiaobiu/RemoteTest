@@ -3,11 +3,13 @@ package edu.monash.controller;
 import com.google.gson.Gson;
 import edu.monash.GlobalRef;
 import edu.monash.entity.DeviceInfo;
+import edu.monash.entity.DispatchStrategy;
 import edu.monash.entity.TestCase;
 import edu.monash.entity.TestRunner;
 import edu.monash.util.FileUtil;
 import edu.monash.util.SocketClient;
 import edu.monash.webservice.DeviceWebService;
+import edu.monash.webservice.DispatchStrategyWebService;
 import edu.monash.webservice.TestCaseWebService;
 import edu.monash.webservice.TestRunnerWebService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +43,9 @@ public class TestCaseController {
     @Autowired
     private TestCaseWebService testCaseWebService;
 
+    @Autowired
+    private DispatchStrategyWebService dispatchStrategyWebService;
+
     @RequestMapping("/generatePatchAPK")
     public void generateAPK(HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
         // URL: http://localhost:8081/RemoteTest/testCase/generateAPK
@@ -48,14 +53,15 @@ public class TestCaseController {
         response.setCharacterEncoding("utf-8");
         logger.info("[deviceInfo] deviceInfo========");
 
-        //step1. insert deviceInfo
+        //step1. insert deviceInfo and dispatchStrategy
         DeviceInfo deviceInfo = deviceWebService.addDevice(request.getParameter("deviceInfo"));
-        int dispatchStrategy = Integer.valueOf(request.getParameter("dispatchStrategy"));
+        DispatchStrategy dispatchStrategy = dispatchStrategyWebService.addDispatchStrategy(request.getParameter("dispatchStrategy"));
 
         logger.info("[deviceInfo] deviceInfo:" + deviceInfo.toString());
 
         //step2. collect test cases
-        List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId(), dispatchStrategy);
+        //List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId(), dispatchStrategy);
+        List<TestCase> testCaseList = testCaseWebService.getTestsFromStartId2EndId(dispatchStrategy.getStartId(), dispatchStrategy.getEndId());
 
         if (CollectionUtils.isNotEmpty(testCaseList)) {
             for (TestCase testCase : testCaseList) {
@@ -63,18 +69,8 @@ public class TestCaseController {
             }
         }
 
-        //step3. todo dispacth [Load balancing strategy]
-        //List<TestCase> dispatchTestCases = testCaseWebService.dispatchTestCases(testCaseList, deviceInfo);
-        List<TestCase> dispatchTestCases = testCaseList;
-
-        if (CollectionUtils.isNotEmpty(dispatchTestCases)) {
-            for (TestCase testCase : dispatchTestCases) {
-                logger.info("[dispatchTestCases] dispatchTestCases:" + testCase.getName());
-            }
-        }
-
         //step4. copy testcases from original path to destination
-        copyTestCases2TargetPath(dispatchTestCases);
+        copyTestCases2TargetPath(testCaseList);
 
         //step5. generate apk patch in /Users/xsun0035/workspace/monash/BasicUnitAndroidTest
         SocketClient.chmod777(GlobalRef.apkBuildPath);
@@ -103,6 +99,24 @@ public class TestCaseController {
 
         //collect Executed Tests
         List<String> testCaseIds = testRunnerWebService.getExecutedTestsByDeviceIdAndDispatchStrategy(request.getParameter("deviceId"), deviceInfo.getDispatchStrategy());
+
+        PrintWriter out = response.getWriter();
+        String resJson = new Gson().toJson(testCaseIds);
+        response.setContentType("application/json");
+        out.print(resJson);
+        out.flush();
+    }
+
+    @RequestMapping("/collectBatchTests")
+    public void collectBatchTests(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectExecutedTests
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
+        DispatchStrategy dispatchStrategy = dispatchStrategyWebService.selectLatestBatch(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
+
+        List<String> testCaseIds = testCaseWebService.getBatchTests(deviceInfo.getDeviceId(), dispatchStrategy);
 
         PrintWriter out = response.getWriter();
         String resJson = new Gson().toJson(testCaseIds);
