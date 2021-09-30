@@ -13,4 +13,7 @@ public class GlobalRef
 
 	public static String apkBuildPath = "/home/ubuntu/monash/LazyCow/";
 
+	public static String monitorCrashAPKPath = "/home/ubuntu/MonitorCrash.apk";
+
+
 }
