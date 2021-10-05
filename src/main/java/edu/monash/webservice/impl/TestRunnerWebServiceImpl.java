@@ -22,13 +22,12 @@ public class TestRunnerWebServiceImpl implements TestRunnerWebService {
     private TestRunnerService testRunnerService;
 
     @Override
-    public TestRunner addRecord(String testCaseRecord, String deviceId) {
+    public void addRecord(String testCaseRecord, String deviceId) {
         JSONObject testRunnerJson = (JSONObject) JSONObject.parse(testCaseRecord);
         TestRunner testRunner = TestRunner.convert2TestRunner(testRunnerJson);
         testRunner.setDeviceId(deviceId);
 
-        int testRunnerId = testRunnerService.insertTestRunner(testRunner);
-        return testRunnerService.selectById(testRunnerId);
+        testRunnerService.insertTestRunner(testRunner);
     }
 
     @Override
@@ -68,6 +67,17 @@ public class TestRunnerWebServiceImpl implements TestRunnerWebService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int getLatestExecutedTestCaseId(String deviceId, int dispatchStrategy) {
+        List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
+        if(CollectionUtils.isEmpty(executedTestCases)){
+            return 0;
+        }else{
+            TestRunner latestExecutedTestCase = executedTestCases.get(executedTestCases.size() - 1);
+            return latestExecutedTestCase.getId();
+        }
     }
 
 }

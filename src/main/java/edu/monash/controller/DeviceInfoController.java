@@ -63,7 +63,7 @@ public class DeviceInfoController {
 
     @RequestMapping("/downloadMonitorCrashAPK")
     public void downloadMonitorCrashAPK(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // URL: http://localhost:8081/RemoteTest/device/downloadMonitorCrashAPK
+        // URL: http://localhost:8080/RemoteTest/device/downloadMonitorCrashAPK
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
 

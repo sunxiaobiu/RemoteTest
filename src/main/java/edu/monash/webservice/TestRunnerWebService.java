@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface TestRunnerWebService {
 
-    public TestRunner addRecord(String testCaseRecord, String deviceId);
+    public void addRecord(String testCaseRecord, String deviceId);
 
     public List<String> getExecutedTestsByDeviceId(String deviceId);
 
@@ -16,4 +16,5 @@ public interface TestRunnerWebService {
 
     public boolean existTestRunnerForStrategy(String deviceId, int dispatchStrategy);
 
+    public int getLatestExecutedTestCaseId(String deviceId, int dispatchStrategy);
 }

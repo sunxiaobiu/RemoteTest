@@ -15,11 +15,11 @@
         <result column="result" property="result"/>
     </resultMap>
 
-	<select id="selectById" resultMap="TestRunnerMap" parameterType="int">
+    <select id="selectById" resultMap="TestRunnerMap" parameterType="int">
         SELECT * FROM test_runner WHERE id = #{id}
     </select>
 
-	<select id="selectListByDeviceId" resultMap="TestRunnerMap" parameterType="String">
+    <select id="selectListByDeviceId" resultMap="TestRunnerMap" parameterType="String">
         select
         	*
         from
@@ -28,7 +28,7 @@
         order by id asc
     </select>
 
-	<select id="selectListByDeviceIdAndDispatchStrategy" resultMap="TestRunnerMap">
+    <select id="selectListByDeviceIdAndDispatchStrategy" resultMap="TestRunnerMap">
         select
         	*
         from
@@ -40,7 +40,7 @@
     </select>
 
     <insert id="insert" parameterType="edu.monash.entity.TestRunner" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO test_runner(
+		INSERT ignore INTO test_runner(
 		test_case_id,
 		device_id,
 		create_time,
@@ -60,17 +60,18 @@
 		);
 	</insert>
 
-	<update id="update" parameterType="edu.monash.entity.TestRunner">
-	update test_runner
-	<set>
-		<if test="testRunner.isSuccess != null">
-			is_success = #{testRunner.isSuccess,jdbcType=TINYINT},
-		</if>
-		<if test="testRunner.result != null">
-			result = #{testRunner.result,jdbcType=TEXT},
-		</if>
-		update_time = now()
-	</set>
-	where test_case_id = #{testRunner.testCaseId} and device_id = #{testRunner.deviceId} and dispatch_strategy = #{dispatchStrategy}
-	</update>
+    <update id="update" parameterType="edu.monash.entity.TestRunner">
+        update test_runner
+        <set>
+            <if test="testRunner.isSuccess != null">
+                is_success = #{testRunner.isSuccess,jdbcType=TINYINT},
+            </if>
+            <if test="testRunner.result != null">
+                result = #{testRunner.result,jdbcType=TEXT},
+            </if>
+            update_time = now()
+        </set>
+        where test_case_id = #{testRunner.testCaseId} and device_id = #{testRunner.deviceId} and dispatch_strategy =
+        #{dispatchStrategy}
+    </update>
 </mapper>

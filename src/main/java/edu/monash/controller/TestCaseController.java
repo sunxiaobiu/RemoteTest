@@ -125,6 +125,24 @@ public class TestCaseController {
         out.flush();
     }
 
+    @RequestMapping("/checkIfCrash")
+    public void checkIfCrash(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/testCase/collectExecutedTests
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
+        int latestId = testRunnerWebService.getLatestExecutedTestCaseId(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
+
+        int remainder = latestId % deviceInfo.getDispatchStrategy();
+
+        PrintWriter out = response.getWriter();
+        String resJson = new Gson().toJson(remainder);
+        response.setContentType("application/json");
+        out.print(resJson);
+        out.flush();
+    }
+
     @RequestMapping("/checkDispatchStrategy")
     public void checkDispatchStrategy(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // URL: http://localhost:8081/RemoteTest/testCase/collectRes
@@ -159,7 +177,7 @@ public class TestCaseController {
         response.setCharacterEncoding("utf-8");
 
         //step1. add testRunnerRecord
-        TestRunner testRunner = testRunnerWebService.addRecord(request.getParameter("testCaseRecord"), request.getParameter("deviceId"));
+        testRunnerWebService.addRecord(request.getParameter("testCaseRecord"), request.getParameter("deviceId"));
 
     }
 
