@@ -138,11 +138,8 @@ public class DeviceInfo {
         deviceInfo.setHardwareName(jsonObject.get("hardware").toString());
         deviceInfo.setLanguage(jsonObject.get("language").toString());
         deviceInfo.setScreenSize(jsonObject.get("screenSize").toString());
-        if(jsonObject.get("dispatchStrategy") != null){
-            deviceInfo.setDispatchStrategy(Integer.valueOf(jsonObject.get("dispatchStrategy").toString()));
-        }else{
-            deviceInfo.setDispatchStrategy(100);
-        }
+        deviceInfo.setDispatchStrategy(Integer.valueOf(jsonObject.get("dispatchStrategy").toString()));
+
         return deviceInfo;
     }
 
