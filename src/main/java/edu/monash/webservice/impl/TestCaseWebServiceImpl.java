@@ -112,4 +112,9 @@ public class TestCaseWebServiceImpl implements TestCaseWebService {
         return testCaseIdList;
     }
 
+    @Override
+    public TestCase getTestCaseByName(String uniqueId) {
+        return testCaseService.findTestCaseByUniqueId(uniqueId);
+    }
+
 }

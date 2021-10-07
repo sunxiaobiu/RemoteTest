@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TestCaseDAO {
 
-    TestCase selectByUniqueId(@Param("uniqueId") int uniqueId);
+    TestCase selectByUniqueId(@Param("uniqueId") String uniqueId);
 
     List<TestCase> selectList(@Param("size") int size);
 

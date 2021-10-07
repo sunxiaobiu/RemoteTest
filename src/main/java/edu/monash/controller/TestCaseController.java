@@ -1,6 +1,8 @@
 package edu.monash.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.mysql.cj.util.StringUtils;
 import edu.monash.GlobalRef;
 import edu.monash.entity.DeviceInfo;
 import edu.monash.entity.DispatchStrategy;
@@ -132,9 +134,21 @@ public class TestCaseController {
         response.setCharacterEncoding("utf-8");
 
         DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
-        int latestId = testRunnerWebService.getLatestExecutedTestCaseId(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
+        String latestTestCaseId = testRunnerWebService.getLatestExecutedTestCaseId(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
+        DispatchStrategy dispatchStrategy = dispatchStrategyWebService.selectLatestBatch(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
 
-        int remainder = latestId % deviceInfo.getDispatchStrategy();
+        int remainder;
+        if(!StringUtils.isNullOrEmpty(latestTestCaseId)){
+            int latestId  = testCaseWebService.getTestCaseByName(latestTestCaseId).getId();
+            if(latestId>= dispatchStrategy.getStartId() && latestId<= dispatchStrategy.getEndId()){
+                remainder = latestId % deviceInfo.getDispatchStrategy();
+            }else {
+                remainder = 0;
+            }
+
+        }else{
+            remainder = 0;
+        }
 
         PrintWriter out = response.getWriter();
         String resJson = new Gson().toJson(remainder);
@@ -153,6 +167,9 @@ public class TestCaseController {
 //
 //        return testRunnerWebService.existTestRunnerForStrategy(request.getParameter("deviceId"), dispatchStrategy);
         DeviceInfo deviceInfo = deviceWebService.getDeviceById(request.getParameter("deviceId"));
+        if(deviceInfo == null){
+            deviceInfo = deviceWebService.addDevice(request.getParameter("deviceInfo"));
+        }
 
         PrintWriter out = response.getWriter();
         String resJson = new Gson().toJson(deviceInfo.getDispatchStrategy());

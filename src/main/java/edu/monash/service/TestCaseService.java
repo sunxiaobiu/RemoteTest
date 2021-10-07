@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface TestCaseService {
 
-    TestCase findTestCaseByUniqueId(int uniqueId);
+    TestCase findTestCaseByUniqueId(String uniqueId);
 
     List<TestCase> selectList(int size);
 

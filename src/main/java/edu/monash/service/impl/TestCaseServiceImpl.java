@@ -16,8 +16,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestCaseDAO testCaseDAO;
 
     @Override
-    public TestCase findTestCaseByUniqueId(int uniqueId) {
-        ExceptionUtil.runtimeExpWithNullCheck(uniqueId, "[DAO.findTestCaseByUniqueId] deviceId shouldn't be null!");
+    public TestCase findTestCaseByUniqueId(String uniqueId) {
+        ExceptionUtil.runtimeExpWithNullCheck(uniqueId, "[DAO.findTestCaseByUniqueId] uniqueId shouldn't be null!");
         return testCaseDAO.selectByUniqueId(uniqueId);
     }
 

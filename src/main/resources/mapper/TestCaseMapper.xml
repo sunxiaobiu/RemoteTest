@@ -12,9 +12,10 @@
 		<result column="create_time" property="createTime"/>
 	</resultMap>
 
-    <select id="selectByUniqueId" resultType="TestCase" parameterType="int">
+    <select id="selectByUniqueId" resultType="TestCase" parameterType="String">
         SELECT * FROM test_case WHERE unique_id = #{uniqueId}
     </select>
+
 
     <select id="selectList" resultMap="TestCaseMap">
         select * from test_case where deleted = 0

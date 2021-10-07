@@ -20,4 +20,6 @@ public interface TestCaseWebService {
 
     public List<String> getBatchTests(String deviceId, DispatchStrategy dispatchStrategy);
 
+    public TestCase getTestCaseByName(String uniqueId);
+
 }

@@ -70,13 +70,13 @@ public class TestRunnerWebServiceImpl implements TestRunnerWebService {
     }
 
     @Override
-    public int getLatestExecutedTestCaseId(String deviceId, int dispatchStrategy) {
+    public String getLatestExecutedTestCaseId(String deviceId, int dispatchStrategy) {
         List<TestRunner> executedTestCases = testRunnerService.selectListByDeviceIdAndDispatchStrategy(deviceId, dispatchStrategy);
         if(CollectionUtils.isEmpty(executedTestCases)){
-            return 0;
+            return null;
         }else{
             TestRunner latestExecutedTestCase = executedTestCases.get(executedTestCases.size() - 1);
-            return latestExecutedTestCase.getId();
+            return Regex.getSubUtilSimple(latestExecutedTestCase.getTestCaseId(), "(.*?\\.)").replace(".","");
         }
     }
 
