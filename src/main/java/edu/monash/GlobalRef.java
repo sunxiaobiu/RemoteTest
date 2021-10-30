@@ -15,5 +15,6 @@ public class GlobalRef
 
 	public static String monitorCrashAPKPath = "/home/ubuntu/MonitorCrash.apk";
 
+	public static String confirmVulnerabilityAPKPath = "/home/ubuntu/app-debug.apk";
 
 }

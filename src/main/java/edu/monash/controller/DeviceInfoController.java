@@ -61,6 +61,23 @@ public class DeviceInfoController {
         out.write(bytes);
     }
 
+    @RequestMapping("/downloadConfirmVulnerabilityAPK")
+    public void downloadConfirmVulnerabilityAPK(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // URL: http://localhost:8081/RemoteTest/device/downloadOriginAPK
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
+
+        OutputStream out = response.getOutputStream();
+        File applicationAPK = new File(GlobalRef.confirmVulnerabilityAPKPath);
+        response.addHeader("Content-Disposition", "attachment;filename=" + "application_"+applicationAPK.getName());
+        response.setContentType("application/octet-stream");
+        byte[] bytes = new byte[(int)applicationAPK.length()];
+        FileInputStream is = new FileInputStream(applicationAPK);
+        is.read(bytes);
+        is.close();
+        out.write(bytes);
+    }
+
     @RequestMapping("/downloadMonitorCrashAPK")
     public void downloadMonitorCrashAPK(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // URL: http://localhost:8080/RemoteTest/device/downloadMonitorCrashAPK

@@ -59,7 +59,7 @@ public class TestCaseController {
         DeviceInfo deviceInfo = deviceWebService.addDevice(request.getParameter("deviceInfo"));
         DispatchStrategy dispatchStrategy = dispatchStrategyWebService.addDispatchStrategy(request.getParameter("dispatchStrategy"));
 
-        logger.info("[deviceInfo] deviceInfo:" + deviceInfo.toString());
+        logger.info("[generatePatchAPK] dispatchStrategy:" + dispatchStrategy.toString());
 
         //step2. collect test cases
         //List<TestCase> testCaseList = testCaseWebService.getNotYetExecutedTestCases(deviceInfo.getDeviceId(), dispatchStrategy);
@@ -137,21 +137,41 @@ public class TestCaseController {
         String latestTestCaseId = testRunnerWebService.getLatestExecutedTestCaseId(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
         DispatchStrategy dispatchStrategy = dispatchStrategyWebService.selectLatestBatch(deviceInfo.getDeviceId(), deviceInfo.getDispatchStrategy());
 
-        int remainder;
+        /**
+         * round 1 strategy
+         */
+//        int remainder;
+//        if(!StringUtils.isNullOrEmpty(latestTestCaseId)){
+//            int latestId  = testCaseWebService.getTestCaseByName(latestTestCaseId).getId();
+//            if(latestId>= dispatchStrategy.getStartId() && latestId<= dispatchStrategy.getEndId()){
+//                remainder = latestId % deviceInfo.getDispatchStrategy();
+//            }else {
+//                remainder = 0;
+//            }
+//
+//        }else{
+//            remainder = 0;
+//        }
+
+        /**
+         * round 2 strategy
+         */
+        int isCrash = 0;
         if(!StringUtils.isNullOrEmpty(latestTestCaseId)){
             int latestId  = testCaseWebService.getTestCaseByName(latestTestCaseId).getId();
             if(latestId>= dispatchStrategy.getStartId() && latestId<= dispatchStrategy.getEndId()){
-                remainder = latestId % deviceInfo.getDispatchStrategy();
-            }else {
-                remainder = 0;
+                if(latestId != dispatchStrategy.getEndId()){
+                    isCrash = 1;
+                }
+            }else{
+                isCrash = 0;
             }
-
-        }else{
-            remainder = 0;
+        }else {
+            isCrash = 0;
         }
 
         PrintWriter out = response.getWriter();
-        String resJson = new Gson().toJson(remainder);
+        String resJson = new Gson().toJson(isCrash);
         response.setContentType("application/json");
         out.print(resJson);
         out.flush();

@@ -33,7 +33,7 @@ public class SocketClient {
             input.close();
             socket.close();
         } catch (Exception e) {
-            System.out.println("客户端异常:" + e.getMessage());
+            System.out.println("客户端异常:" + e);
         } finally {
             if (socket != null) {
                 try {
@@ -69,7 +69,7 @@ public class SocketClient {
             input.close();
             socket.close();
         } catch (Exception e) {
-            System.out.println("【chmod777】客户端异常:" + e.getMessage());
+            System.out.println("【chmod777】客户端异常:" + e);
         } finally {
             if (socket != null) {
                 try {
