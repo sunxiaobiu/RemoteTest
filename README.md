@@ -40,5 +40,5 @@ side include (4) Test Cases Collection, (5) Device Registration,
 (6) Test Cases Allocation, (7) Test Cases Packaging & Dispatch,
 and (8) API Compatibility Analysis.
 
-![avatar](LazyCow_architecture.pdf)
+![avatar](LazyCow.jpg)
 
